@@ -46,19 +46,19 @@ Example flow:
 ### 2. Activation Functions
 The network uses different activation functions for different layers:
 - **ReLU (Rectified Linear Unit)** for hidden layers:
-    - \( \text{ReLU}(x) = \max(0, x) \)
+    - `ReLU(x) = max(0, x)`
 - **Softmax** for the output layer, which converts raw scores to probabilities:
-    - \( \text{Softmax}(z) = \frac{e^{z_i}}{\sum_j e^{z_j}} \)
+    - `Softmax(z) = exp(z_i) / sum(exp(z_j))`
 
 ### 3. Softmax and Cross-Entropy Loss
 The **softmax function** is used in the output layer to convert the final layer's output into probabilities for multi-class classification. Afterward, the **cross-entropy loss** is calculated to determine the error between the predicted probabilities and the true one-hot encoded labels.
 
-Example calculation:
-- For an output \( Z \), the loss is computed as:
-  \[
-  L = -\frac{1}{N} \sum_{i=1}^{N} y_i \cdot \log(\hat{y_i})
-  \]
-  where \( \hat{y_i} \) is the predicted probability and \( y_i \) is the true label (one-hot encoded).
+### Example Loss Calculation:
+For an output `Z`, the cross-entropy loss is computed as:
+  - `L = -(1/N) * sum(y_i * log(y_hat_i))`
+where `y_hat_i` is the predicted probability and `y_i` is the true label (one-hot encoded).
+
+
 
 
 ## Next Steps
