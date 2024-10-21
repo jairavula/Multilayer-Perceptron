@@ -1,7 +1,7 @@
-
+import numpy as np
 
 class Training:
-    
+
     def __init__(self, neural_network):
         self.neural_network = neural_network
         self.output_batch = []
@@ -16,7 +16,18 @@ class Training:
         return average_loss
     
     def training_pass(self, X, Y):
-        self.output_batch = self.neural_network.forward_pass(X)
-        loss = self.cross_entropy_loss(Y, self.output_batch)
-        print(f"Loss: {loss}")
+        self.output_batch = []
+
+        # Loop through each example (each column in X)
+        for i in range(X.shape[1]):
+            input_example = X[:, i:i+1]  # Extract the i-th column as a 2D array (column vector)
+            output = self.neural_network.forward_pass(input_example) 
+            self.output_batch.append(output)  # Append to the output batch
+
+        self.output_batch = np.hstack(self.output_batch)  # Stack column vectors into a matrix
+        loss = self.cross_entropy_loss(Y, self.output_batch) # Compute loss across entire batch
+
+        return loss
+
+    
 
