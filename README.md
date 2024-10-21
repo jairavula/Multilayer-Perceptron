@@ -1,4 +1,4 @@
-# Neural Network from Scratch
+# Neural Network from Scratch- WORK IN PROGRESS
 
 ## Overview
 
@@ -28,8 +28,8 @@ The goal of this project is to provide a hands-on, low-level implementation of a
 ├── Layer.py            # Layer class with activation functions and weight matrices
 ├── Tests.py            # Unit tests for forward propagation and loss calculation
 └── README.md           # Project README (this file)
+```
 
-## Implemented Features
 
 ## Implemented Features
 
