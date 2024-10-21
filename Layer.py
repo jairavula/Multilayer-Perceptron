@@ -17,5 +17,12 @@ class Layer:
         if self.activation is None:
             return Z_vector
         else:
-            return self.activation(self,Z_vector)
+            return self.activation(self, Z_vector)
+
+    # Activation function for output layer, converts raw vector values to probability distribution
+    def softmax(self, Z):
+        numerator = np.exp(Z)
+        denominator = np.sum(np.exp(Z))
+        return numerator / denominator
+
         
