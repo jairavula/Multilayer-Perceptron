@@ -133,12 +133,42 @@ def test_first_hidden_layer_activations():
     assert A_previous.shape == expected_shape, f"Expected shape {expected_shape}, but got {A_previous.shape}"
 
 
+def test_four_layer_network():
+
+    network = NeuralNetwork()
+
+    input_matrix = np.array([[1, -0.5],[-2, 1],[3, 1.5]])
+
+    hidden_layer_1 = Layer(3,2, activation= Layer.reLu)
+    hidden_layer_1.W = np.array([[0.1, -0.2, -0.3], [0.4, 0.5, 0.6]])
+    hidden_layer_1.b = np.array([[0.5],[0.25]])
+
+    hidden_layer_2 = Layer(2,3, activation= Layer.reLu)
+    hidden_layer_2.W = np.array([[1.2, -1.4], [0.6, 0.9], [-2.3,4.1]])
+    hidden_layer_2.b = np.array([[-1],[0.4],[-2.2]])
+
+    output_layer = Layer(3,2, activation= Layer.softmax)
+    output_layer.W = np.array([[0.7, -0.3, 1.1], [0.2,-1,-0.3]])
+    output_layer.b = np.array([[0.72],[0.78]])
+
+    network.add_layer(hidden_layer_1)
+    network.add_layer(hidden_layer_2)
+    network.add_layer(output_layer)
+
+    true_output = np.array([[1,1],[0,0]])
+    training = Training(network)
+    loss = training.training_pass(input_matrix, true_output )
+
+    print(f"Loss: {loss}")
+
+
 
 
 
 if __name__ == '__main__':
-    test_forward_propagation()
-    test_full_forward_propagation()
-    test_forward_training_pass()
-    test_output_layer_backpropagation()
-    test_first_hidden_layer_activations()
+    # test_forward_propagation()
+    # test_full_forward_propagation()
+    # test_forward_training_pass()
+    # test_output_layer_backpropagation()
+    # test_first_hidden_layer_activations()
+    test_four_layer_network()

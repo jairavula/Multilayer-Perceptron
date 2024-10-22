@@ -22,6 +22,7 @@ class Training:
         for i in range(X.shape[1]):
             input_example = X[:, i:i+1]  # Extract the i-th column as a 2D array (column vector)
             output = self.neural_network.forward_pass(input_example) 
+            print(output)
             self.output_batch.append(output)  # Append to the output batch
 
         self.output_batch = np.hstack(self.output_batch)  # Stack column vectors into a matrix
