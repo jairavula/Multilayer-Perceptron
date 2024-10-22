@@ -68,6 +68,37 @@ def test_forward_training_pass():
 
     np.testing.assert_almost_equal(loss, expected_loss, decimal = 6)
 
+def test_output_layer_backpropagation():
+
+    network = NeuralNetwork() # Create a network
+
+    hidden_layer = Layer(3, 2, activation = Layer.reLu) # Initialize hidden layer structure
+    hidden_layer.W = np.array([[0.2, -0.1, 0.4], [-0.3, 0.5, 0.6]]) # Hidden Layer Weights
+    hidden_layer.b = np.array([[0.1], [-0.2]]) # Hidden Layer Biases
+
+
+    output_layer = Layer(2, 3, activation = Layer.softmax) # Initialize output layer structure
+    output_layer.W = np.array([[0.3, -0.2],[-0.5, 0.4],[0.2, 0.1]]) # Output Layer Weights
+    output_layer.b = np.array([[0.05], [-0.05], [0.1]]) # Output Layer Biases
+
+    network.add_layer(hidden_layer)
+    network.add_layer(output_layer)
+
+    # Network is now constructed, create a training instance
+    training = Training(network)
+
+    input_data = np.array([[0.1, 0.5], [0.2, 0.6], [0.3, 0.7]]) # Ex. 1 [0.1, 0.2, 0.3] Ex. 2 [0.5, 0.6, 0.7]
+    true_output = np.array([[1, 0], [0, 1], [0, 0]]) # Ex. 1 [1, 0, 0] Ex. 2 [0, 1, 0]
+
+    loss = training.training_pass(input_data, true_output)
+
+    dW_matrix, dB_matrix, error = training.output_layer_backpropagation(true_output)
+    print("dW (Output to Hidden):", dW_matrix)
+    print("Error propagated to hidden layer:", error)
+
+    dw2, db2, current_error = training.hidden_layer_backpropagation(1, error)
+    print("dW (Input to Hidden):", dw2)  # Should print the weight gradients for the hidden layer
+    print("dB (Hidden Layer Bias Gradients):", db2)
 
 
 
@@ -75,3 +106,4 @@ if __name__ == '__main__':
     test_forward_propagation()
     test_full_forward_propagation()
     test_forward_training_pass()
+    test_output_layer_backpropagation()
