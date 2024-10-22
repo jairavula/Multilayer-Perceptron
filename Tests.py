@@ -93,12 +93,46 @@ def test_output_layer_backpropagation():
     loss = training.training_pass(input_data, true_output)
 
     dW_matrix, dB_matrix, error = training.output_layer_backpropagation(true_output)
-    print("dW (Output to Hidden):", dW_matrix)
+    print("dW (Output to Hidden): \n", dW_matrix)
+    print("dB (Output to Hidden): \n", dB_matrix)
     print("Error propagated to hidden layer:", error)
 
-    dw2, db2, current_error = training.hidden_layer_backpropagation(1, error)
-    print("dW (Input to Hidden):", dw2)  # Should print the weight gradients for the hidden layer
-    print("dB (Hidden Layer Bias Gradients):", db2)
+    dw2, db2, current_error = training.hidden_layer_backpropagation(0, error, input_data)
+    print("dW (Input to Hidden): \n", dw2)  # Should print the weight gradients for the hidden layer
+    print("dB (Hidden Layer Bias Gradients):\n", db2)
+
+def test_first_hidden_layer_activations():
+    # Initialize the network with one hidden layer
+    network = NeuralNetwork()  # Create a network
+
+    input_matrix = np.array([[0.1, 0.5], [0.2, 0.6], [0.3, 0.7]])  # 3 input neurons
+
+    hidden_layer = Layer(3, 2, activation=Layer.reLu)  # 3 inputs, 2 outputs (hidden layer)
+    hidden_layer.W = np.array([[0.2, -0.1, 0.4], [-0.3, 0.5, 0.6]])  # Example weights
+    hidden_layer.b = np.array([[0.1], [-0.2]])  # Example biases
+    network.add_layer(hidden_layer)
+
+    output_layer = Layer(2, 3, activation=Layer.softmax)  # 2 inputs, 3 outputs (output layer)
+    output_layer.W = np.array([[0.3, -0.2], [-0.5, 0.4], [0.2, 0.1]])  # Example weights
+    output_layer.b = np.array([[0.05], [-0.05], [0.1]])  # Example biases
+    network.add_layer(output_layer)
+    true_output = np.array([[1, 0], [0, 1], [0, 0]]) # Ex. 1 [1, 0, 0] Ex. 2 [0, 1, 0]
+    training = Training(network)
+    _ = training.training_pass(input_matrix, true_output )  # Forward pass without Y
+
+    # Get activations of the first hidden layer (training_A)
+    A_previous = network.layers[0].training_A  # This should now be the activations
+
+    print("Shape of input_matrix:", input_matrix.shape)
+    print("Shape of training_A (first hidden layer):", A_previous.shape)
+    print("Values of input_matrix:\n", input_matrix)
+    print("Values of training_A (first hidden layer):\n", A_previous)
+
+    # Check if the activations shape matches the expected shape (2, 2) for 2 hidden neurons and 2 examples
+    expected_shape = (2, input_matrix.shape[1])  # (2 hidden neurons, 2 examples)
+    assert A_previous.shape == expected_shape, f"Expected shape {expected_shape}, but got {A_previous.shape}"
+
+
 
 
 
@@ -107,3 +141,4 @@ if __name__ == '__main__':
     test_full_forward_propagation()
     test_forward_training_pass()
     test_output_layer_backpropagation()
+    test_first_hidden_layer_activations()

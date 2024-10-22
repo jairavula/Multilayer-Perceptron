@@ -31,47 +31,57 @@ class Training:
 
     def output_layer_backpropagation(self, Y):
         y_pred = self.output_batch
-        error = y_pred - Y # Resultant error matrix from processed batch
+        error = y_pred - Y  # Error matrix from processed batch
 
-        self.neural_network.layers[-2].finalize_training_data()
+        # Get activations from the previous layer
+        A_prev_layer = self.neural_network.layers[-2].training_A
 
-        A_prev_layer = self.neural_network.layers[-2].training_A.T # Previous layer neuron activations
+        # Compute gradient of loss with respect to weights
+        dW = np.dot(error, A_prev_layer.T)
 
-        # # Computes gradient of loss with respect to weights for each neuron in layer
-        dW = np.dot(error, A_prev_layer)
+        # Compute gradient of loss with respect to biases
+        dB = np.sum(error, axis=1, keepdims=True)
 
-        # Computes gradient of loss with respect to biases for each neuron in layer
-        dB = np.sum(error, axis = 1, keepdims= True)
+        return dW, dB, error
+
+    def hidden_layer_backpropagation(self, layer_idx, error, input_matrix = None):
+
+        # Get current layer weights and training Z (pre-activations)
+        W_layer = self.neural_network.layers[layer_idx + 1].W  # W from the next layer
+        Z_current = np.array(self.neural_network.layers[layer_idx].training_Z)  # Ensure it's a NumPy array
+        
+    
+        if layer_idx == 0:
+            # If previous layer is the input, input matrix acts as activations
+            A_previous = input_matrix  
+        else:
+            # Get activations of the previous hidden layer
+            A_previous = self.neural_network.layers[layer_idx - 1].training_A 
 
 
-        return  dW, dB, error
-
-    def hidden_layer_backpropagation(self, layer_idx, error):
-
-        # Current layer weights
-        W_layer = self.neural_network.layers[layer_idx].W  
-        Z_current = np.array(self.neural_network.layers[layer_idx].training_Z)
-
-        # Get the activations and pre-activation values (Z) of the previous layer
-        A_previous = np.array(self.neural_network.layers[layer_idx - 1].training_A) 
+        A_previous_T = A_previous.T  # Transpose to match dimensions for matrix multiplication
+        print(f"A_previous_T shape: {A_previous_T.shape}")
+        print(f"A_previous_T values:\n{A_previous_T}\n")
 
         # Backpropagate the error from the next layer to the current layer
         error_current_raw = np.dot(W_layer.T, error)
 
-        # Apply the ReLU derivative to the error for the current layer
+        # Apply ReLU derivative to the error for the current layer
         relu_derivative = Z_current > 0  # Derivative of ReLU: 1 where Z > 0, 0 where Z <= 0
-        print(relu_derivative)
+        error_current = error_current_raw * relu_derivative
 
-        
-        error_current = error_current_raw * relu_derivative 
+        # Compute gradient of loss with respect to weights (dW)
+        dW_layer = np.dot(error_current, A_previous_T) 
 
-         # Computes gradient of loss with respect to weights for each neuron in layer
-        dW_layer = np.dot(error_current, A_previous.T)
-
-        # Computes gradient of loss with respect to biases for each neuron in layer
+        # Compute gradient of loss with respect to biases (dB)
         dB_layer = np.sum(error_current, axis=1, keepdims=True)
 
-        return dW_layer, dB_layer, error_current  
+        return dW_layer, dB_layer, error_current
+
+
+
+
+
 
 
 

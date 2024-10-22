@@ -16,3 +16,4 @@ class NeuralNetwork:
         for layer in self.layers:
             output = layer.forward_propagation(output) # Carry out propogation through all layers
         return output # Return the resultant column-vector of the neural network
+   
