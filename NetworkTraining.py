@@ -50,6 +50,9 @@ class Training:
         # Get current layer weights and training Z (pre-activations)
         W_layer = self.neural_network.layers[layer_idx + 1].W  # W from the next layer
         Z_current = np.array(self.neural_network.layers[layer_idx].training_Z)  # Ensure it's a NumPy array
+
+        print(f"Z_current shape: {Z_current.shape}")
+        print(f"Z_current:\n{Z_current}\n")
         
     
         if layer_idx == 0:
@@ -61,15 +64,24 @@ class Training:
 
 
         A_previous_T = A_previous.T  # Transpose to match dimensions for matrix multiplication
+        print(f"Backpropogated error: \n {error}")
         print(f"A_previous_T shape: {A_previous_T.shape}")
         print(f"A_previous_T values:\n{A_previous_T}\n")
 
         # Backpropagate the error from the next layer to the current layer
         error_current_raw = np.dot(W_layer.T, error)
 
+        print(f"Current Error Raw shape: {error_current_raw.shape}")
+        print(f"Current Error Raw:\n{error_current_raw}\n")
+
+
+
         # Apply ReLU derivative to the error for the current layer
         relu_derivative = Z_current > 0  # Derivative of ReLU: 1 where Z > 0, 0 where Z <= 0
         error_current = error_current_raw * relu_derivative
+
+        print(f"Current Error shape: {error_current.shape}")
+        print(f"Current Error :\n{error_current}\n")
 
         # Compute gradient of loss with respect to weights (dW)
         dW_layer = np.dot(error_current, A_previous_T) 

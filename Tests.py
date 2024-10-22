@@ -133,7 +133,7 @@ def test_first_hidden_layer_activations():
     assert A_previous.shape == expected_shape, f"Expected shape {expected_shape}, but got {A_previous.shape}"
 
 
-def test_four_layer_network():
+def test_multi_layer_network():
 
     network = NeuralNetwork()
 
@@ -159,7 +159,12 @@ def test_four_layer_network():
     training = Training(network)
     loss = training.training_pass(input_matrix, true_output )
 
-    print(f"Loss: {loss}")
+    dW_matrix, dB_matrix, error = training.output_layer_backpropagation(true_output)
+    dw2, db2, current_error = training.hidden_layer_backpropagation(1, error)
+    dw3, db3, final_error = training.hidden_layer_backpropagation(0,current_error, input_matrix)
+    print("dW (Input to Hidden): \n", dw3)  
+    print("dB (Hidden Layer Bias Gradients):\n", db3)
+    
 
 
 
@@ -171,4 +176,4 @@ if __name__ == '__main__':
     # test_forward_training_pass()
     # test_output_layer_backpropagation()
     # test_first_hidden_layer_activations()
-    test_four_layer_network()
+    test_multi_layer_network()
