@@ -10,8 +10,22 @@ class NeuralNetwork:
         self.input = None
         self.output = None
 
-    def add_layer(self, layer):
-        self.layers.append(layer) # Add a layer into the neural network
+    def add_layer(self, layer, index=None):
+        if index is None:
+            # Append if no index is specified
+            self.layers.append(layer)
+        else:
+            # Insert at the specified index, shifting other layers down
+            self.layers.insert(index, layer)
+
+    def remove_layer(self, index):
+        if 0 <= index < len(self.layers):
+            # Remove the layer at the specified index
+            removed_layer = self.layers.pop(index)
+            print(f"Layer at index {index} removed: {removed_layer}")
+        else:
+            # Handle invalid index gracefully
+            raise IndexError("Layer index out of range.")
     
     def forward_pass(self, X):
         output = X # Base case 

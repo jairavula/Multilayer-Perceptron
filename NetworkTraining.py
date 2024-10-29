@@ -1,4 +1,5 @@
 import numpy as np
+from NeuralNetwork import NeuralNetwork
 
 class Training:
 

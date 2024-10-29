@@ -3,6 +3,7 @@ import numpy as np
 from Layer import Layer
 from NeuralNetwork import NeuralNetwork
 from NetworkTraining import Training
+from Model import Model
 
 def test_forward_propagation():
     
@@ -208,7 +209,37 @@ def test_identity_mapping_network():
     output = training.neural_network.make_prediction()
     print(f"Trained Model Output: \n {training.neural_network.output}")
 
+def test_model_class_interface():
 
+    model = Model(4,4)
+    model.add_layer(4,4,0, activation=Layer.reLu)
+    model.add_layer(4,4,1, activation=Layer.softmax)
+
+    input_batch = np.array([[1, 0, 0, 0],
+                            [0, 1, 0, 0], 
+                            [0, 0, 1, 0], 
+                            [0, 0, 0, 1]])
+
+    true_output_batch = np.array([[1, 0, 0, 0],
+                                [0, 1, 0, 0], 
+                                [0, 0, 1, 0], 
+                                [0, 0, 0, 1]])
+    
+    untrained_output = model.process_raw_single_input(np.array([[1],[0],[0],[0]]))
+    print(f"Untrained Model Input: \n {model.neural_network.input}")
+    print(f"Untrained Model Output: \n {untrained_output}")
+
+    model.train_model(input_batch, true_output_batch)
+
+    untrained_output = model.process_raw_single_input(np.array([[1],[0],[0],[0]]))
+    print(f"Trained Model Input: \n {model.neural_network.input}")
+    print(f"Trained Model Output: \n {model.training_architecture.neural_network.output}")
+
+
+
+    
+
+    
 if __name__ == '__main__':
     # test_forward_propagation()
     # test_full_forward_propagation()
@@ -217,3 +248,4 @@ if __name__ == '__main__':
     # test_first_hidden_layer_activations()
     # test_multilayer_network()
     test_identity_mapping_network()
+    #test_model_class_interface()
