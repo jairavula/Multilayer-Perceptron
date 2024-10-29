@@ -5,6 +5,8 @@ class Training:
     def __init__(self, neural_network):
         self.neural_network = neural_network
         self.output_batch = []
+        self.training_input_batch = None
+        self.training_true_output = None
 
     def cross_entropy_loss(self, y_true, y_pred):
         epsilon = 1e-12
@@ -15,24 +17,24 @@ class Training:
 
         return average_loss
     
-    def training_pass(self, X, Y):
+    def training_pass(self):
         self.output_batch = []
 
         # Loop through each example (each column in X)
-        for i in range(X.shape[1]):
-            input_example = X[:, i:i+1]  # Extract the i-th column as a 2D array (column vector)
+        for i in range(self.training_input_batch.shape[1]):
+            input_example = self.training_input_batch[:, i:i+1]  # Extract the i-th column as a 2D array (column vector)
             output = self.neural_network.forward_pass(input_example) 
             print(output)
             self.output_batch.append(output)  # Append to the output batch
 
         self.output_batch = np.hstack(self.output_batch)  # Stack column vectors into a matrix
-        loss = self.cross_entropy_loss(Y, self.output_batch) # Compute loss across entire batch
+        loss = self.cross_entropy_loss(self.training_true_output, self.output_batch) # Compute loss across entire batch
 
         return loss
 
-    def output_layer_backpropagation(self, Y):
+    def output_layer_backpropagation(self):
         y_pred = self.output_batch
-        error = y_pred - Y  # Error matrix from processed batch
+        error = y_pred - self.training_true_output  # Error matrix from processed batch
 
         # Get activations from the previous layer
         A_prev_layer = self.neural_network.layers[-2].training_A
@@ -43,53 +45,58 @@ class Training:
         # Compute gradient of loss with respect to biases
         dB = np.sum(error, axis=1, keepdims=True)
 
+        # Save output layer weight and bias gradients
+        self.neural_network.layers[-1].dW = dW 
+        self.neural_network.layers[-1].dB = dB
+        self.neural_network.layers[-1].error = error
+
         return dW, dB, error
 
-    def hidden_layer_backpropagation(self, layer_idx, error, input_matrix = None):
+    def hidden_layer_backpropagation(self, layer_idx):
 
         # Get current layer weights and training Z (pre-activations)
         W_layer = self.neural_network.layers[layer_idx + 1].W  # W from the next layer
-        Z_current = np.array(self.neural_network.layers[layer_idx].training_Z)  # Ensure it's a NumPy array
-
-        print(f"Z_current shape: {Z_current.shape}")
-        print(f"Z_current:\n{Z_current}\n")
-        
+        Z_current = np.array(self.neural_network.layers[layer_idx].training_Z)  # Convert to numpy arrray
     
         if layer_idx == 0:
             # If previous layer is the input, input matrix acts as activations
-            A_previous = input_matrix  
+            A_previous = self.training_input_batch
         else:
-            # Get activations of the previous hidden layer
+            # Else, Get activations of the previous hidden layer
             A_previous = self.neural_network.layers[layer_idx - 1].training_A 
 
-
         A_previous_T = A_previous.T  # Transpose to match dimensions for matrix multiplication
-        print(f"Backpropogated error: \n {error}")
-        print(f"A_previous_T shape: {A_previous_T.shape}")
-        print(f"A_previous_T values:\n{A_previous_T}\n")
+        backpropogated_error = self.neural_network.layers[layer_idx + 1].error
 
         # Backpropagate the error from the next layer to the current layer
-        error_current_raw = np.dot(W_layer.T, error)
-
-        print(f"Current Error Raw shape: {error_current_raw.shape}")
-        print(f"Current Error Raw:\n{error_current_raw}\n")
-
-
+        error_current_raw = np.dot(W_layer.T, backpropogated_error)
 
         # Apply ReLU derivative to the error for the current layer
         relu_derivative = Z_current > 0  # Derivative of ReLU: 1 where Z > 0, 0 where Z <= 0
         error_current = error_current_raw * relu_derivative
 
-        print(f"Current Error shape: {error_current.shape}")
-        print(f"Current Error :\n{error_current}\n")
-
         # Compute gradient of loss with respect to weights (dW)
-        dW_layer = np.dot(error_current, A_previous_T) 
+        dW = np.dot(error_current, A_previous_T) 
 
         # Compute gradient of loss with respect to biases (dB)
-        dB_layer = np.sum(error_current, axis=1, keepdims=True)
+        dB = np.sum(error_current, axis=1, keepdims=True)
 
-        return dW_layer, dB_layer, error_current
+        # Save hidden layer weight and bias gradients
+        self.neural_network.layers[layer_idx].dW = dW
+        self.neural_network.layers[layer_idx].dB = dB
+        self.neural_network.layers[layer_idx].error = error_current
+
+        # print(f"Z_current shape: {Z_current.shape}")
+        # print(f"Z_current:\n{Z_current}\n")
+        # print(f"Backpropogated error: \n {error}")
+        # print(f"A_previous_T shape: {A_previous_T.shape}")
+        # print(f"A_previous_T values:\n{A_previous_T}\n")
+        # print(f"Current Error Raw shape: {error_current_raw.shape}")
+        # print(f"Current Error Raw:\n{error_current_raw}\n")
+        # print(f"Current Error shape: {error_current.shape}")
+        # print(f"Current Error :\n{error_current}\n")
+
+        return dW, dB, error_current
 
 
 

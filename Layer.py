@@ -8,10 +8,14 @@ class Layer:
         self.activation = activation # Activation function
 
         self.Z = None # Z before applying activation
-        self.A = None # A <- Z After applying activation
+        self.A = None # A <- Z After applying activationsourcve
 
         self.training_Z = None # Matrix to store Z vectors for batch training
         self.training_A = None # Matrix to store A vectors for batch training
+
+        self.dW = None # Stores gradient matrix for layer weights in backpropogation
+        self.dB = None # Stores gradient matrix for layer biases in backpropogation
+        self.error = None # Stores Error at layer to backpropogate
 
     
     # Rectified Linear Unit Function, Replace all values < 0 with 0

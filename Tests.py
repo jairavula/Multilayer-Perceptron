@@ -137,8 +137,6 @@ def test_multi_layer_network():
 
     network = NeuralNetwork()
 
-    input_matrix = np.array([[1, -0.5],[-2, 1],[3, 1.5]])
-
     hidden_layer_1 = Layer(3,2, activation= Layer.reLu)
     hidden_layer_1.W = np.array([[0.1, -0.2, -0.3], [0.4, 0.5, 0.6]])
     hidden_layer_1.b = np.array([[0.5],[0.25]])
@@ -155,15 +153,16 @@ def test_multi_layer_network():
     network.add_layer(hidden_layer_2)
     network.add_layer(output_layer)
 
-    true_output = np.array([[1,1],[0,0]])
-    training = Training(network)
-    loss = training.training_pass(input_matrix, true_output )
 
-    dW_matrix, dB_matrix, error = training.output_layer_backpropagation(true_output)
-    dw2, db2, current_error = training.hidden_layer_backpropagation(1, error)
-    dw3, db3, final_error = training.hidden_layer_backpropagation(0,current_error, input_matrix)
-    print("dW (Input to Hidden): \n", dw3)  
-    print("dB (Hidden Layer Bias Gradients):\n", db3)
+    training = Training(network)
+
+    training.training_input_batch = np.array([[1, -0.5],[-2, 1],[3, 1.5]])
+    training.training_true_output = np.array([[1,1],[0,0]])
+    loss = training.training_pass()
+
+    dW_matrix, dB_matrix, error = training.output_layer_backpropagation()
+    dw2, db2, current_error = training.hidden_layer_backpropagation(1)
+    dw3, db3, final_error = training.hidden_layer_backpropagation(0)
     
 
 
