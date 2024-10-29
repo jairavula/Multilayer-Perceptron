@@ -168,6 +168,56 @@ def test_multi_layer_network():
     
 
 
+def test_identity_mapping_network():
+    network = NeuralNetwork()
+
+    hidden_layer = Layer(4,4, activation= Layer.reLu)
+    hidden_layer.W = np.array([[0.1, -0.2, -0.3, -0.1], 
+                                [0.4, 0.5, 0.6, -0.2], 
+                                [0.1, -0.5, 0.2, -0.8], 
+                                [0.1, 2.4, 1.3, -0.2]])
+    hidden_layer.b = np.array([[0.5],[0.25], [3.1], [0.11]])
+
+    output_layer = Layer(4,4, activation= Layer.softmax)
+    output_layer.W = np.array([[1.1, -0.44, -0.3, -0.22], 
+                                [0.76, -0.5, 0.32, -0.8], 
+                                [2.4, -1.2, -0.27, -0.1], 
+                                [0.1, 1.4, 1.3, -0.77]])
+    output_layer.b = np.array([[1.2],[0.5], [3.1], [1.33]])
+
+    network.add_layer(hidden_layer)
+    network.add_layer(output_layer)
+
+    training = Training(network)
+    training.learning_rate = 0.1
+
+    training.training_input_batch = np.array([[1, 0, 0, 0],
+                                             [0, 1, 0, 0], 
+                                            [0, 0, 1, 0], 
+                                            [0, 0, 0, 1]])
+
+    training.training_true_output = np.array([[1, 0, 0, 0],
+                                             [0, 1, 0, 0], 
+                                            [0, 0, 1, 0], 
+                                            [0, 0, 0, 1]])
+
+     # Run multiple epochs to observe learning progress
+    for epoch in range(100):  # Adjust number as needed
+        training.clear_layer_activations() # Clear previous activations
+        loss = training.training_pass()  # Forward pass and calculate loss
+        training.output_layer_backpropagation()  # Backprop for output layer
+        dw2, db2, current_error = training.hidden_layer_backpropagation(0)  # Backprop for hidden layer
+        training.gradient_descent_update()  # Update weights and biases
+
+        # Print progress every few epochs
+        if epoch % 10 == 0:  # Print every 10 epochs
+            print(f"Epoch {epoch} - Loss: {loss}")
+
+    
+
+
+
+
 
 
 
@@ -177,4 +227,5 @@ if __name__ == '__main__':
     # test_forward_training_pass()
     # test_output_layer_backpropagation()
     # test_first_hidden_layer_activations()
-    test_multi_layer_network()
+    # test_multi_layer_network()
+    test_identity_mapping_network()

@@ -18,6 +18,12 @@ class Training:
 
         return average_loss
     
+    def clear_layer_activations(self):
+        # Clear previous layer activations for new epoch
+        for layer in self.neural_network.layers:
+            layer.training_A = None
+            layer.training_Z = None
+    
     def training_pass(self):
         self.output_batch = []
 
@@ -25,7 +31,8 @@ class Training:
         for i in range(self.training_input_batch.shape[1]):
             input_example = self.training_input_batch[:, i:i+1]  # Extract the i-th column as a 2D array (column vector)
             output = self.neural_network.forward_pass(input_example) 
-            print(output)
+            # print(output)
+            # print()
             self.output_batch.append(output)  # Append to the output batch
 
         self.output_batch = np.hstack(self.output_batch)  # Stack column vectors into a matrix
@@ -104,15 +111,15 @@ class Training:
 
         for i, layer in enumerate(self.neural_network.layers):
             if layer.dW is not None and layer.dB is not None: 
-                print(f"Previous Layer {i} weights: {layer.W}")
-                print(f"Previous Layer {i} biases: {layer.b}")
-                print(f"Stored Layer {i} dW: {layer.dW}")
-                print(f"Stored Layer {i} dB: {layer.dB}")
+                # print(f"Previous Layer {i} weights: {layer.W}")
+                # print(f"Previous Layer {i} biases: {layer.b}")
+                # print(f"Stored Layer {i} dW: {layer.dW}")
+                # print(f"Stored Layer {i} dB: {layer.dB}")
                 layer.W -= self.learning_rate * layer.dW
                 layer.b -= self.learning_rate * layer.dB
 
-                print(f"Layer {i} weights updated: {layer.W}")
-                print(f"Layer {i} biases updated: {layer.b}")
+                # print(f"Layer {i} weights updated: {layer.W}")
+                # print(f"Layer {i} biases updated: {layer.b}")
             else:
                 print(f" Missing dW or dB at Layer {idx}")
 
