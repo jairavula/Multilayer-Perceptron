@@ -2,7 +2,7 @@ import numpy as np
 
 class Layer:
 
-    def __init__(self, n_input, n_output, activation = None):
+    def __init__(self, n_input, n_output, activation = None, initialization="he"):
         self.W = np.random.randn(n_output, n_input) * 0.01
         self.b = np.zeros((n_output, 1))
         self.activation = activation # Activation function
@@ -16,6 +16,20 @@ class Layer:
         self.dW = None # Stores gradient matrix for layer weights in backpropogation
         self.dB = None # Stores gradient matrix for layer biases in backpropogation
         self.error = None # Stores Error at layer to backpropogate
+
+         # Random weight initialization
+        if initialization == "xavier":
+            limit = np.sqrt(6 / (n_input + n_output))
+            self.W = np.random.uniform(-limit, limit, (n_output, n_input))
+        elif initialization == "he":
+            limit = np.sqrt(2 / n_input)
+            self.W = np.random.normal(0, limit, (n_output, n_input))
+        else:
+            # No technique specified
+            self.W = np.random.uniform(-0.01, 0.01, (n_output, n_input))
+
+        # Bias initialization
+        self.b = np.zeros((n_output, 1))
 
     
     # Rectified Linear Unit Function, Replace all values < 0 with 0
