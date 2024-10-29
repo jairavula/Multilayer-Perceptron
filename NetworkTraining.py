@@ -2,9 +2,10 @@ import numpy as np
 
 class Training:
 
-    def __init__(self, neural_network):
+    def __init__(self, neural_network, learning_rate = 0.01):
         self.neural_network = neural_network
         self.output_batch = []
+        self.learning_rate: float = learning_rate
         self.training_input_batch = None
         self.training_true_output = None
 
@@ -40,7 +41,7 @@ class Training:
         A_prev_layer = self.neural_network.layers[-2].training_A
 
         # Compute gradient of loss with respect to weights
-        dW = np.dot(error, A_prev_layer.T)
+        dW = np.dot(error, A_prev_layer.T) / self.training_input_batch.shape[1]
 
         # Compute gradient of loss with respect to biases
         dB = np.sum(error, axis=1, keepdims=True)
@@ -98,7 +99,29 @@ class Training:
 
         return dW, dB, error_current
 
+    # Network weight and bias updating via gradient descent
+    def gradient_descent_update(self):
 
+        for i, layer in enumerate(self.neural_network.layers):
+            if layer.dW is not None and layer.dB is not None: 
+                print(f"Previous Layer {i} weights: {layer.W}")
+                print(f"Previous Layer {i} biases: {layer.b}")
+                print(f"Stored Layer {i} dW: {layer.dW}")
+                print(f"Stored Layer {i} dB: {layer.dB}")
+                layer.W -= self.learning_rate * layer.dW
+                layer.b -= self.learning_rate * layer.dB
+
+                print(f"Layer {i} weights updated: {layer.W}")
+                print(f"Layer {i} biases updated: {layer.b}")
+            else:
+                print(f" Missing dW or dB at Layer {idx}")
+
+
+        return
+
+    # Network weight and bias updating via the Adam Optimizer
+    def adam_optimizer_update(self):
+        return
 
 
 

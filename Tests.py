@@ -132,7 +132,6 @@ def test_first_hidden_layer_activations():
     expected_shape = (2, input_matrix.shape[1])  # (2 hidden neurons, 2 examples)
     assert A_previous.shape == expected_shape, f"Expected shape {expected_shape}, but got {A_previous.shape}"
 
-
 def test_multi_layer_network():
 
     network = NeuralNetwork()
@@ -159,10 +158,13 @@ def test_multi_layer_network():
     training.training_input_batch = np.array([[1, -0.5],[-2, 1],[3, 1.5]])
     training.training_true_output = np.array([[1,1],[0,0]])
     loss = training.training_pass()
+    print(loss)
 
     dW_matrix, dB_matrix, error = training.output_layer_backpropagation()
     dw2, db2, current_error = training.hidden_layer_backpropagation(1)
     dw3, db3, final_error = training.hidden_layer_backpropagation(0)
+
+    training.gradient_descent_update()
     
 
 
