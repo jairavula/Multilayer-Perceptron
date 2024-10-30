@@ -1,4 +1,4 @@
-# Neural Network from Scratch- WORK IN PROGRESS
+# Neural Network Library from Scratch- WORK IN PROGRESS
 
 
 
