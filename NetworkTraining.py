@@ -13,7 +13,6 @@ class Training:
     def cross_entropy_loss(self, y_true, y_pred):
         epsilon = 1e-12
         y_pred_clipped = np.clip(y_pred, epsilon, 1 - epsilon) # Replace 0's and 1's with close values
-
         loss = -np.sum(y_true * np.log(y_pred_clipped)) # Calculate Loss for all column-vectors in batch
         average_loss = loss / y_true.shape[1] # Find average loss based on batch size
 
@@ -28,7 +27,7 @@ class Training:
     def training_pass(self):
         self.output_batch = []
 
-        # Loop through each example (each column in X)
+        # Loop through each example (each column in X)=
         for i in range(self.training_input_batch.shape[1]):
             input_example = self.training_input_batch[:, i:i+1]  # Extract the i-th column as a 2D array (column vector)
             output = self.neural_network.forward_pass(input_example) 
