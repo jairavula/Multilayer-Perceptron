@@ -191,14 +191,14 @@ def test_identity_mapping_network():
                                             [0, 0, 0, 1]])
 
     # Untrained model predictions
-    training.neural_network.input = np.array([[1],[0],[0],[0]])
+    training.neural_network.input = np.array([[0],[0],[0],[1]])
     output = training.neural_network.make_prediction()
 
     print(f"Untrained Model Input: \n {training.neural_network.input}")
     print(f"Untrained Model Output: \n {output}")
 
      # Run multiple epochs to observe learning progress
-    for epoch in range(1000):  # Adjust number as needed
+    for epoch in range(100):  # Adjust number as needed
         training.clear_layer_activations() # Clear previous activations
         loss = training.training_pass()  # Forward pass and calculate loss
         training.output_layer_backpropagation()  # Backprop for output layer
@@ -237,7 +237,26 @@ def test_model_class_interface():
 
 
 
+def test_xor_problem():
+    model = Model(2,1, learning_rate= 0.1)
+    model.add_layer(2,2,0, activation=Layer.reLu)
+    model.add_layer(2,1,1, activation=Layer.sigmoid)
+
+    input_batch = np.array([[0,0,1,1],[0,1,0,1]])
+
+    true_output_batch = np.array([[0,1,1,0]])
     
+    untrained_output = model.process_raw_single_input(np.array([[0],[1]]))
+    print(f"Untrained Model Input: \n {model.neural_network.input}")
+    print(f"Untrained Model Output: \n {untrained_output}")
+
+
+    model.train_model(input_batch, true_output_batch)
+
+    untrained_output = model.process_raw_single_input(np.array([[0],[1]]))
+    print(f"Trained Model Input: \n {model.neural_network.input}")
+    print(f"Trained Model Output: \n {model.training_architecture.neural_network.output}")
+
 
     
 if __name__ == '__main__':
@@ -247,5 +266,7 @@ if __name__ == '__main__':
     # test_output_layer_backpropagation()
     # test_first_hidden_layer_activations()
     # test_multilayer_network()
-    test_identity_mapping_network()
-    #test_model_class_interface()
+    # test_identity_mapping_network()
+    # test_model_class_interface()
+    # test_xor_problem()
+    return

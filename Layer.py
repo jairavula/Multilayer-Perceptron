@@ -32,9 +32,6 @@ class Layer:
         self.b = np.zeros((n_output, 1))
 
     
-    # Rectified Linear Unit Function, Replace all values < 0 with 0
-    def reLu(self, Z):
-        return np.maximum(0,Z)
 
     # Z = activation_function(W * X + b)
     def forward_propagation(self, X):
@@ -60,11 +57,19 @@ class Layer:
 
         return self.A
 
-    # Activation function for output layer, converts raw vector values to probability distribution
+    # Rectified Linear Unit Function, Replace all values < 0 with 0
+    def reLu(self, Z):
+        return np.maximum(0,Z)
+
+    # Activation function- Softmax, converts output to probability distribution
     def softmax(self, Z):
         numerator = np.exp(Z)
         denominator = np.sum(np.exp(Z))
         return numerator / denominator
+    
+    # Sigmoid function, use for binary classification
+    def sigmoid(self, Z):
+        return 1 / (1 + np.exp(-Z))
 
 
         
