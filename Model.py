@@ -97,6 +97,26 @@ class Model:
         runtime = end_time - start_time
         print(f"Runtime: {runtime:.6f} seconds")
 
+    def test_model_performance(self, x_dataset, y_dataset):
+        correct_predictions = 0
+        total_predictions = x_dataset.shape[1]
+        for i in range(total_predictions):
+            output = self.neural_network.forward_pass(x_dataset[:, i].reshape(-1, 1))  # Ensure it's a column vector
+            predicted_label = np.zeros_like(output)
+            predicted_label[np.argmax(output)] = 1
+
+            true_label= y_dataset[:, i].reshape(-1, 1)
+
+            if np.array_equal(predicted_label, true_label):
+                correct_predictions += 1
+        accuracy = correct_predictions / total_predictions
+        print(f"Accuracy of model's predictions: {accuracy:.4f}% ")
+
+
+        # Convert the output to a 1 hot vector given the highest probability
+        # Compare the two vectors, if equal, increment correct predicitions
+        # Increment total predictions
+        # Return correct over total
 
             
 

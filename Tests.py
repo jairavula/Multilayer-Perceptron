@@ -235,8 +235,6 @@ def test_model_class_interface():
     print(f"Trained Model Input: \n {model.neural_network.input}")
     print(f"Trained Model Output: \n {model.training_architecture.neural_network.output}")
 
-
-
 def test_xor_problem():
     model = Model(2,1, learning_rate= 0.1)
     model.add_layer(2,2,0, activation=Layer.reLu)
@@ -256,7 +254,6 @@ def test_xor_problem():
     untrained_output = model.process_raw_single_input(np.array([[0],[1]]))
     print(f"Trained Model Input: \n {model.neural_network.input}")
     print(f"Trained Model Output: \n {model.training_architecture.neural_network.output}")
-
 
     
 if __name__ == '__main__':
